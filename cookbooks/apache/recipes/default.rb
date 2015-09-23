@@ -30,6 +30,9 @@ end
 #  action :remove
 #end
 
+require 'pry'
+binding.pry
+
 # Disable the default virtual host
 execute 'move default virtual host' do
   command 'mv welcome.conf welcome.conf.disabled'
