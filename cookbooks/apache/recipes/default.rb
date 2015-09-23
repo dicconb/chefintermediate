@@ -7,11 +7,11 @@
 # All rights reserved - Do Not Redistribute
 #
 
-package "httpd" do
+package 'httpd' do
   action :install
 end
 
-ruby_block "randomly_choose_language" do
+ruby_block 'randomly_choose_language' do
   block do
     if Random.rand > 0.5
       node.run_state['scripting_language'] = 'php'
@@ -21,35 +21,37 @@ ruby_block "randomly_choose_language" do
   end
 end
 
-package "scripting_language" do
- package_name lazy { node.run_state['scripting_language'] }
- action :install
+package 'scripting_language' do
+  package_name lazy { node.run_state['scripting_language'] }
+  action :install
 end
 
-apache_vhost 'welcome' do
-  action :remove
-end
+#apache_vhost 'welcome' do
+#  action :remove
+#end
 
 # Disable the default virtual host
-execute "mv /etc/httpd/conf.d/welcome.conf /etc/httpd/conf.d/welcome.conf.disabled" do 
+execute 'move default virtual host' do
+  command 'mv welcome.conf welcome.conf.disabled'
   only_if do
-    File.exist?("/etc/httpd/conf.d/welcome.conf")
+    File.exist?('/etc/httpd/conf.d/welcome.conf')
   end
-  notifies :restart, "service[httpd]"
+  cwd '/etc/httpd/conf.d/'
+  notifies :restart, 'service[httpd]'
 end
 
 # Iterate over the apache sites
-node["apache"]["sites"].each do |site_name, site_data|
+node['apache']['sites'].each do |site_name, site_data|
   # Set the document root
 
   # Enable an Apache Virtualhost
   apache_vhost site_name do
     action :create
-    site_port site_data["port"]
-    notifies :restart, "service[httpd]"
+    site_port site_data['port']
+    notifies :restart, 'service[httpd]'
   end
 end
 
-service "httpd" do
-  action [ :enable, :start ]
+service 'httpd' do
+  action [:enable, :start]
 end
