@@ -11,6 +11,10 @@ package "httpd" do
   action :install
 end
 
+apache_vhost 'welcome' do
+  action :remove
+end
+
 # Disable the default virtual host
 execute "mv /etc/httpd/conf.d/welcome.conf /etc/httpd/conf.d/welcome.conf.disabled" do 
   only_if do
