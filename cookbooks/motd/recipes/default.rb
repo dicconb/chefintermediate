@@ -13,7 +13,17 @@ template "/etc/motd" do
   mode "0644"
 end
 
-file "/tmp/diccon" do
-  action :create
-  content 'is awesome'
+if node['something']
+
+	file "/tmp/diccon" do
+	  action :create
+	  content 'is awesome'
+	end
+
+end
+
+execute 'dicconexecute' do
+  only_if { File.exist?('/tmp/missing') }
+  action :run
+  command 'echo 1'
 end
