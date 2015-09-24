@@ -8,6 +8,12 @@
 #
 
 template "/etc/motd" do
+  action :create
   source "motd.erb"
   mode "0644"
+end
+
+file "/tmp/diccon" do
+  action :create
+  content 'is awesome'
 end
